@@ -8,7 +8,7 @@ DS 4420
 **1. Neural network (drafted or not)**  
 A simple multi layer perceptron (MLP) classifier that predicts whether a player will be drafted within their position group. It takes historical combine and college data and outputs a prediction using a sigmoid activation.
 
-**2. Bayesian model (draft position)**  
+**2. Bayesian model (drafted or not)**  
 A Bayesian model that predicts if a player will be drafted or not based on their metrics. It takes historical combine and college data and outputs a prediction. 
 
 
