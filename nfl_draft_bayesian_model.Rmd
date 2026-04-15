@@ -162,16 +162,18 @@ plot_test_dashboard <- function(y_test, probs, y_hat, player_names, threshold, m
   count_false_negative <- sum(actual_drafted == 1 & predicted_drafted == 0)
   count_false_positive <- sum(actual_drafted == 0 & predicted_drafted == 1)
   count_true_positive <- sum(actual_drafted == 1 & predicted_drafted == 1)
-  par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
-  plot(0, 0, type = "n", xlim = c(0, 2), ylim = c(0, 2), asp = 1,
-       xlab = "Actual", ylab = "Predicted", main = "Confusion",
+  par(mfrow = c(1, 2), mar = c(4, 3.2, 3, 1))
+  plot(0, 0, type = "n", xlim = c(-0.95, 2), ylim = c(0, 2), asp = 1,
+       xlab = "Actual class", ylab = "", main = "Confusion matrix",
        xaxt = "n", yaxt = "n")
+  mtext("Predicted class", side = 2, line = 1.8)
   rect(0, 1, 1, 2, col = "wheat"); text(0.5, 1.5, count_true_negative, cex = 2)
   rect(1, 1, 2, 2, col = "wheat"); text(1.5, 1.5, count_false_negative, cex = 2)
   rect(0, 0, 1, 1, col = "wheat"); text(0.5, 0.5, count_false_positive, cex = 2)
   rect(1, 0, 2, 1, col = "wheat"); text(1.5, 0.5, count_true_positive, cex = 2)
   axis(1, at = c(0.5, 1.5), labels = c("Not drafted", "Drafted"))
-  axis(2, at = c(0.5, 1.5), labels = c("Pred: drafted", "Pred: not"), las = 1)
+  text(-0.06, 1.5, "Not drafted", adj = c(1, 0.5), cex = 0.95, xpd = NA)
+  text(-0.06, 0.5, "Drafted", adj = c(1, 0.5), cex = 0.95, xpd = NA)
   test_row_index <- seq_along(probs)
   plot(test_row_index, probs, pch = 19, col = ifelse(actual_drafted == 1, "darkgreen", "red"),
        xlab = "Test player (row)", ylab = "P(drafted)", main = main_title)
@@ -312,6 +314,31 @@ for (i in seq_along(position_config)) {
 
 compare_tbl <- do.call(rbind, compare_rows)
 rownames(compare_tbl) <- NULL
+```
+
+```{r export-offensive-csv-for-streamlit}
+offensive_positions <- c("WR", "QB", "RB")
+bayes_offensive_export <- do.call(
+  rbind,
+  lapply(offensive_positions, function(pos) {
+    fit <- fits[[pos]]
+    pr <- fit$prep
+    cfg <- position_config[[pos]]
+    n_te <- length(pr$y_test)
+    data.frame(
+      position = pos,
+      player = pr$player_test,
+      test_row = seq_len(n_te) - 1L,
+      y_true = as.integer(pr$y_test),
+      p_drafted = as.numeric(fit$post_prob_test),
+      y_hat_default = as.integer(fit$y_hat_test),
+      prob_threshold_default = fit$prob_threshold,
+      tau_sq = fit$tau_sq,
+      proposal_sd = cfg$proposal_sd,
+      stringsAsFactors = FALSE
+    )
+  })
+)
 ```
 
 ### Comparison across positions
