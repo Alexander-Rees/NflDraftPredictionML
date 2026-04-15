@@ -9,7 +9,7 @@ DS 4420
 A simple multi layer perceptron (MLP) classifier that predicts whether a player will be drafted within their position group. It takes historical combine and college data and outputs a prediction using a sigmoid activation.
 
 **2. Bayesian model (draft position)**  
-A Bayesian model that predicts a player’s draft position relative to others at their position. For example “top 10% of QBs drafted that year”. Not an exact pick number. This gives a probabilistic estimate and lets us use prior information from past draft classes.
+A Bayesian logistic regression model that predicts draft outcomes for individual players at a position level. It also takes in combine and college data and outputs a prediction for whether a player is drafted or not. 
 
 
 ## Data sources
